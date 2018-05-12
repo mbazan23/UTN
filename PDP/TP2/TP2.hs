@@ -12,6 +12,8 @@ type Instruccion=Microcontrolador -> Microcontrolador
 xt8088 = Microcontrolador [] (0,0) 0 "" []
 fp20 = Microcontrolador [] (7,24) 0 "" []
 at8086 = Microcontrolador [1..20] (0,0) 0 "" []
+microDesorden = Microcontrolador [2,5,1,0,6,9] (0,0) 0 "" []
+
 aumentarPc microcontrolador=microcontrolador{
     programCounter=(programCounter microcontrolador)+1
 }
@@ -23,7 +25,7 @@ add microcontrolador = microcontrolador{
 }
     
 realizarDivision (a,b)=(a `div` b,0)
-divide (Microcontrolador memoriaDeDatos (a,0) programCounter etiquetaError programa) = Microcontrolador memoriaDeDatos (a,0) programCounter "Division by zero" programa
+divide (Microcontrolador memoriaDeDatos (a,0) programCounter etiquetaError programa) = Microcontrolador memoriaDeDatos (a,0) programCounter "DIVISION BY ZERO" programa
 divide microcontrolador = microcontrolador {
    acumuladores=realizarDivision(acumuladores microcontrolador)
 }
@@ -73,9 +75,13 @@ ifnz2  (Microcontrolador memoriaDeDatos (0,b) programCounter etiquetaError progr
 ifnz2  microcontrolador=(aumentarPc.ejecutarPrograma) microcontrolador
 
 depurar microcontrolador=microcontrolador{
-    programa=filter (haceAlgo microcontrolador) (programa microcontrolador)}
+    programa=filter (haceAlgo microcontrolador) (programa microcontrolador)
+}
+
 haceAlgo microcontrolador instruccion= (not.quedoTodoEnCero.instruccion) microcontrolador
 quedoTodoEnCero (Microcontrolador memoriaDeDatos acumuladores programCounter etiquetaError programa)=acumuladores==(0,0) && all (==0) memoriaDeDatos
+
+
 
 estaOrdenada (Microcontrolador memoriaDeDatos acumuladores programCounter etiquetaError programa)=chequearOrden memoriaDeDatos
 chequearOrden []=True
@@ -89,27 +95,22 @@ punto3 xt8088 = (add.(lodv 22).swap.(lodv 10)) xt8088
 punto4 xt8088 = (divide.(lod 1).swap.(lod 2).(str 2 0).(str 1 2)) xt8088
 punto4d xt8088 = (divide.(lod 1).swap.(lod 2).(str 2 4).(str 1 12)) xt8088
 
------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------
+---																CASOS DE PRUEBA
 
-casoP2 xt8088 = (nop.nop.nop) xt8088
+--- SUMA 10 Y 22     >> ( ejecutarPrograma.cargarPrograma add.cargarPrograma (lodv 22).cargarPrograma swap.cargarPrograma (lodv 10) ) xt8088
+--- DIVISION 2 POR 0 >> ( ejecutarPrograma.cargarPrograma divide.cargarPrograma (lod 1).cargarPrograma swap.cargarPrograma (lod 2).cargarPrograma (str 2 0).cargarPrograma (str 1 2) ) xt8088 
 
-icasoP3 xt8088 = (  ejecutarPrograma.cargarPrograma add.(cargarPrograma (lodv 22)).cargarPrograma swap.(cargarPrograma (lodv 10))  ) xt8088
-
-casoP4 xt8088 = ( ejecutarPrograma.(cargarPrograma divide).(cargarPrograma (lod 1)).cargarPrograma swap.(cargarPrograma (lod 2)).(cargarPrograma (str 2 0)).(cargarPrograma (str 1 2))  ) xt8088
-
-casoP4d xt8088 = (divide.(lod 1).swap.(lod 2).(str 2 4).(str 1 12)) xt8088
-
-
-
----  casoP3 xt8088                          FUNCIONA
----  casoP4 xt8088                          FUNCIONA 
-
---- ifnz ((swap.(lodv 3)) fp20)             FUNCIONA
---- (ifnz ((swap. (lodv 3))) xt8088         FALLA
-
---- (ifnz (swap.(lodv 3))) fp20             FUNCIONA        
---- (ifnz ((swap.(lodv 3)))) xt8088         FUNCIONA
+--- IFNZ FP20  >> (ifnz (swap.(lodv 3))) fp20             FUNCIONA        
+--- IFNZ XT8088>> (ifnz ((swap.(lodv 3)))) xt8088         FUNCIONA
 
 ---  ifnz (swap.(lodv 3)) fp20              FUNCIONA
 ---  ifnz (swap.(lodv 3)) xt8088            FUNCIONA    (se modifico funcion)
 
+--- SIN DEPURAR>> ( cargarPrograma (str 2 0).cargarPrograma (str 1 3).cargarPrograma (lodv 0).cargarPrograma (lodv 133).cargarPrograma nop.cargarPrograma swap ) xt8088
+--- DEPURADO  >>> ( depurar.cargarPrograma (str 2 0).cargarPrograma (str 1 3).cargarPrograma (lodv 0).cargarPrograma (lodv 133).cargarPrograma nop.cargarPrograma swap ) xt8088
+
+--- ORDEN EN XT8088       >> estaOrdenada xt8088
+--- ORDEN EN MICRODESORDEN>> estaOrdenada microDesorden
+
+ 
