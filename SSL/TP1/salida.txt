@@ -1,0 +1,15 @@
+
+El contenido del archivo de prueba es 
+
+
+ 12340         Decimal
+ 0X15AF12      Hexadecimal
+ 023454        Octal
+ 0123          Octal
+ 564811        Decimal
+ 0X1a2         Hexadecimal
+ X548          No se reconoce tipo de Dato
+ asdf          No se reconoce tipo de Dato
+ 0XA5          Hexadecimal
+ 0001
+         No se reconoce tipo de Dato

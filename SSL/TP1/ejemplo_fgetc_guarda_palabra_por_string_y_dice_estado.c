@@ -12,10 +12,12 @@ char* analizadorSintactico(char* palabra);
 int main()
 {
 	FILE *archivo;
+	FILE *nuevoArchivo;
 	char caracter;
 	char palabra[10];
 	limpiarString(palabra);
 	archivo = fopen("prueba.txt","r");
+	nuevoArchivo = fopen("salida.txt","w");
 	
 	if (archivo == NULL)
         {
@@ -23,7 +25,7 @@ int main()
         }
         else
         {
-            printf("\nEl contenido del archivo de prueba es \n\n");
+            printf(nuevoArchivo,"\nEl contenido del archivo de prueba es \n\n");
             caracter = fgetc(archivo);
             int indice = 0;
             while(caracter != EOF)
@@ -31,7 +33,7 @@ int main()
 				if (caracter == ' ') 
 				{ 
 					char* tipoDeDato = analizadorSintactico(palabra);
-					printf ("\n %s   %s", palabra,tipoDeDato);
+					fprintf (nuevoArchivo,"\n %s   %s", palabra,tipoDeDato);
 					limpiarString(palabra);
 				    caracter = fgetc(archivo);
 				    indice = 0;
@@ -44,7 +46,7 @@ int main()
 				if (caracter == EOF)
 				{
 					char* tipoDeDato = analizadorSintactico(palabra);
-					printf ("\n %s   %s", palabra,tipoDeDato);
+					fprintf (nuevoArchivo,"\n %s   %s", palabra,tipoDeDato);
 					limpiarString(palabra);
 				}
 				
